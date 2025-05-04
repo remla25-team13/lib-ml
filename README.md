@@ -11,4 +11,4 @@ This repository contains the shared pre-processing logic which is reused by both
 ## Installation
 
 ```bash
-pip install git+https://github.com/remla25-teamXX/lib-ml.git@v1.0.0
+pip install git+https://github.com/remla25-team13/lib-ml.git@v1.0.0
