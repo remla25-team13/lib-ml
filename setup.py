@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='lib-ml',
+    name='lib_ml',
     description='Shared preprocessing logic',
     author='remla25-team13',
     packages=find_packages(),
@@ -11,5 +11,5 @@ setup(
         "pandas==2.2.2",
         "scipy==1.13"
     ],
-    python_requires='>=3.10',
+    python_requires='>=3.12',
 )
