@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lib_ml"
+version = "0.1.0"  # Adjust as needed or automate with Git
+description = "Shared preprocessing logic"
+authors = [
+    { name = "remla25-team13" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "numpy==1.26.4",
+    "scikit-learn==1.4.2",
+    "pandas==2.2.2",
+    "scipy==1.13"
+]
+
+[tool.setuptools.packages.find]
+where = ["lib_ml"]
