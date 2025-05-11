@@ -1,8 +1,42 @@
-*.DS_Store
-.idea/
-.ipynb_checkpoints
+# Byte-compiled / optimized / DLL files
 __pycache__/
-venv
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
 build/
 dist/
-*egg*/
+*.egg-info/
+.eggs/
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Virtual environments
+venv/
+.env/
+.venv/
+
+# VSCode / PyCharm / IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Pytest cache
+.pytest_cache/
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+
+# Test and temp files
+*.log
+*.tmp
+*.bak
+
+# System files
+.DS_Store
+Thumbs.db
