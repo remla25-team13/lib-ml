@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "lib_ml"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Shared preprocessing logic"
 authors = [
     { name = "remla25-team13" }
