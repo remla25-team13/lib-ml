@@ -40,3 +40,5 @@ htmlcov/
 # System files
 .DS_Store
 Thumbs.db
+
+/lib-ml/_version.py
