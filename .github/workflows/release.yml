@@ -2,8 +2,10 @@ name: Release Python Package
 
 on:
   push:
+    branches:
+      - main
     tags:
-      - "v[0-9]+.[0-9]+.[0-9]+" 
+      - "v[0-9]+.[0-9]+.[0-9]+"
 
 jobs:
   build-and-release:
@@ -11,18 +13,61 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: "3.12"
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install setuptools wheel
+          pip install build
 
       - name: Build package
         run: |
-          python setup.py sdist bdist_wheel
+          python -m build .
+
+      - name: Get package version the package name
+        id: get_version
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            VERSION="${GITHUB_REF#refs/tags/}"
+            echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+            echo "prerelease=false" >> "$GITHUB_OUTPUT"
+            echo "tagged=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Not a tagged release. Using the latest version from dist/*.whl"
+            VERSION="v$(ls dist/*.whl | tail -n1 | grep -oP '\d+\.\d+\.\d+(\.\w+\d+)*')"
+            echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+            echo "prerelease=true" >> "$GITHUB_OUTPUT"
+            echo "tagged=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        if: github.ref_type == 'tag' || github.ref == 'refs/heads/main'
+        with:
+          name: lib-ml
+          path: dist/*
+
+      - name: Create GitHub Release
+        id: create_release
+        if: github.ref_type == 'tag' || github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.get_version.outputs.version }}
+          name: Release ${{ github.ref_name }}
+          body: |
+            Automated release of lib-ml.
+            Version: ${{ steps.get_version.outputs.version }}
+          draft: false
+          prerelease: ${{ steps.get_version.outputs.prerelease }}
+          make_latest: ${{ steps.get_version.outputs.tagged }}
+          files: |
+            dist/*
