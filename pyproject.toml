@@ -1,6 +1,6 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
 
 [project]
 name = "lib_ml"
@@ -17,5 +17,14 @@ dependencies = [
     "scipy==1.13"
 ]
 
-[tool.setuptools.packages.find]
-where = ["."]
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.build.hooks.vcs]
+version-file = "lib_ml/_version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["lib_ml"]
+
+[tool.hatch.version.raw-options]
+local_scheme = "no-local-version"
