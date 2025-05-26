@@ -1,6 +1,5 @@
 import re
 import string
-
 from typing import List
 
 
@@ -10,11 +9,11 @@ class Preprocessor:
 
     def preprocess(self, text: str) -> str:
         """Clean and normalize a single input string."""
-        text = text.lower()                          
-        text = text.strip()                         
+        text = text.lower()
+        text = text.strip()
         text = self.remove_urls(text)
         text = self.remove_punctuation(text)
-        text = re.sub(r"\s+", " ", text)            
+        text = re.sub(r"\s+", " ", text)
         return text
 
     def preprocess_batch(self, texts: List[str]) -> List[str]:
