@@ -12,6 +12,25 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Get release version from git
+        id: get_version
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            echo "Tagged release detected."
+            VERSION="${GITHUB_REF#refs/tags/}"
+            echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+            echo "prerelease=false" >> "$GITHUB_OUTPUT"
+            echo "tagged=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Not a tagged release. Using fallback version."
+            VERSION="$(./get_semver.sh)"
+            echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+            echo "prerelease=true" >> "$GITHUB_OUTPUT"
+            echo "tagged=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -26,3 +45,21 @@ jobs:
       - name: Build package
         run: |
           python setup.py sdist bdist_wheel
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.get_version.outputs.version }}
+          name: ${{ steps.get_version.outputs.version }}
+          body: |
+            Python package release
+            Version: ${{ steps.get_version.outputs.version }}
+          draft: false
+          prerelease: ${{ steps.get_version.outputs.prerelease }}
+          make_latest: ${{ steps.get_version.outputs.tagged }}
+          files: |
+            dist/*.tar.gz
+            dist/*.whl
+        if: github.ref_type == 'tag' || github.ref == 'refs/heads/main'
